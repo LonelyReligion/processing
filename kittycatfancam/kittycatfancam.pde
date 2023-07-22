@@ -1,23 +1,25 @@
 import processing.video.*;
 
+//kamera
 Capture video;
+
+//do tla
 int n = 0;
 int kierunek = 1;
+
+//kot
 int oczyX;
 int oczyY;
 
-void setup() {
-  size(800, 920);
-  video = new Capture(this, 500, 500, 30);
-  video.start();
-}
-
-void captureEvent(Capture video) {
-  video.read();
-}
-
-void draw() {
+void rysujtlo(){
   background(255, n*0.75 , 153 + second() % 255);
+    n = n + 1*kierunek;
+  if(n == (-1) || n == 256)
+    kierunek = kierunek * (-1);
+};
+
+void rysujkota(){
+  rysujtlo();
   if(mouseY >= 155){
     oczyY = 155;
   } else if(mouseY <= 145){
@@ -41,10 +43,6 @@ void draw() {
   
   fill(255, 230, 230);
   triangle(325, 150, 475, 150, 400, 300);
-  
-  n = n + 1*kierunek;
-  if(n == (-1) || n == 256)
-    kierunek = kierunek * (-1);
   tint(666, 0, 255);
   image(video, 150, 250, 500, 500);
   
@@ -85,6 +83,51 @@ void draw() {
   
   circle(oczyX + 10, oczyY, 5);
   circle(oczyX - 60, oczyY, 5);
+};
+
+float ctr = 0;
+int kierunek_gwiazdy = 1;
+
+void rysuj_gwiazdke(int x, int y){
+  fill(105 - ctr* 3 * kierunek % 255, 255, 255);
+  noStroke();
+  quad(0 - ctr + x, 25 + y, 10 + x, 0 + y, 20 + ctr + x, 25 + y, 10 + x, 50 + y);
+  ctr += 0.2 * kierunek_gwiazdy;
+  if(ctr > 15 || ctr < -10){
+    kierunek_gwiazdy = -kierunek_gwiazdy;
+  };
+}
+
+int przezroczystosc = 0;
+void rysuj_gwiazdke_2(int x, int y){
+  fill(255, 255, 255, przezroczystosc);
+  
+  quad(40, 50, 60, 0, 80, 50, 60, 100);
+  quad(40, 150, 60, 100, 80, 150, 60, 200);
+  quad(60, 100, 10, 10, 20, 20, 30, 30);
+  
+  przezroczystosc += kierunek;
+  if(przezroczystosc == 255 || przezroczystosc == 0 ){
+    kierunek = -kierunek;
+  }
+}
+
+void setup() {
+  size(800, 920);
+  video = new Capture(this, 500, 500, 30);
+  video.start();
+}
+
+void captureEvent(Capture video) {
+  video.read();
+}
+
+void draw() {
+  rysujkota();
+  
+  rysuj_gwiazdke(700, 200);
+  rysuj_gwiazdke(50, 600);
+  //rysuj_gwiazdke_2(0, 0);
   
   textSize(58);
   fill(242, 166, 223);
